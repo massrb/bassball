@@ -64,6 +64,9 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 
+gem "therubyracer", '0.12.3'
+gem "less-rails"
 gem "twitter-bootstrap-rails"
 gem 'nokogiri'
 gem 'react_on_rails', '11.1.4' 
+# gem 'mini_racer', platforms: :ruby
