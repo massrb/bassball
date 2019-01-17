@@ -22,7 +22,7 @@ class MainController < ApplicationController
 	File.open(pub_path, 'wb') do |file|
 		file.write(tmp_file.read)
 	end
-
+   puts 'cal load'
 	Player.load_xml(pub_path)
 
    result = {}

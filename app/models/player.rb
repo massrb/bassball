@@ -35,7 +35,10 @@ class Player < ApplicationRecord
      # doc = File.open(path) { |f| Nokogiri::XML(f) }
      missing = {}
      doc = Nokogiri::XML(File.open(path))
+     cnt = 0
      doc.xpath('//PLAYER').each do |rec| 
+     	cnt += 1
+     	puts 'COUNT:' + cnt.to_s
      	player = Player.new
      	rec.children.each do |field|
      	  fld = field.name.downcase
