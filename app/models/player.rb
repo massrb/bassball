@@ -1,5 +1,26 @@
 class Player < ApplicationRecord
 
+  def tb
+  	self.hits + 
+  	(self.doubles * 2) + 
+  	(self.triples * 3) +
+  	(self.home_runs * 4)
+  end
+
+=begin
+  def ops
+  	puts 'this' + self.inspect
+  	 (at_bats * (walks + hits + hit_by_pitch) + 
+  	 (hits + doubles + triples + home_runs) * 
+    (at_bats + walks + sacrifice_flies + hit_by_pitch)) / 
+  	 (at_bats * (at_bats + walks + sacrifice_flies + hit_by_pitch))
+  	end
+=end
+
+
+  # Player.select(:id, :hits, :runs, :home_runs, :rbi, :steals).order(hits: :desc).limit(25)
+
+
   def self.load_xml(path)
      # doc = Nokogiri.XML(open(path))
      # doc = File.open(path) { |f| Nokogiri::XML(f) }
