@@ -6,7 +6,7 @@ class CreatePlayers < ActiveRecord::Migration[5.2]
       t.string :position
       t.integer :games
       t.integer :games_started
-      t.integer :at_bats
+      t.decimal :at_bats, :precision => 4, :scale => 2
       t.integer :runs
       t.integer :hits
       t.integer :doubles
@@ -35,7 +35,7 @@ class CreatePlayers < ActiveRecord::Migration[5.2]
       t.integer :earned_runs
       t.integer :wild_pitches
       t.integer :balk
-      t.decimal :era, :precision => 5, :scale => 2
+      t.decimal :era, :precision => 4, :scale => 2
       t.timestamps
     end
   end

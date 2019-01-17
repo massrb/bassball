@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2019_01_17_042606) do
     t.string "position"
     t.integer "games"
     t.integer "games_started"
-    t.integer "at_bats"
+    t.decimal "at_bats", precision: 4, scale: 2
     t.integer "runs"
     t.integer "hits"
     t.integer "doubles"
@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 2019_01_17_042606) do
     t.integer "earned_runs"
     t.integer "wild_pitches"
     t.integer "balk"
-    t.decimal "era", precision: 5, scale: 2
+    t.decimal "era", precision: 4, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

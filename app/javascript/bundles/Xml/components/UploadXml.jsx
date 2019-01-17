@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
+import BaseBallStats from './BaseBallStats';
+
 // import DeDupeResult from './DeDupeResult';
 
 export default class UploadXml extends React.Component {
@@ -34,10 +36,10 @@ export default class UploadXml extends React.Component {
 				success: function (data) {
 						// your callback here
 					console.log(data);
-					//ReactDOM.render(
-					//	React.createElement(DeDupeResult, { data: data }),
-					//	document.getElementById('main-container')
-					//);
+					ReactDOM.render(
+						React.createElement(BaseBallStats, { field: 'avg' }),
+						document.getElementById('main-container')
+					);
 				},
 				error: function (error) {
 					alert('Upload failed');

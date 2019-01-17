@@ -1,11 +1,20 @@
 class Player < ApplicationRecord
 
-  def tb
-  	self.hits + 
-  	(self.doubles * 2) + 
-  	(self.triples * 3) +
-  	(self.home_runs * 4)
-  end
+
+	def self.get_rows(fld)
+		avg = 'hits / at_bats'
+  		ops = "(at_bats * (walks + hits + hit_by_pitch) + " +
+  			"(hits + doubles + triples + home_runs) * " +
+  			"(at_bats + walks + sacrifice_flies + hit_by_pitch)) / " +
+  			"(at_bats * " +
+  			"(at_bats + walks + sacrifice_flies + hit_by_pitch))"
+  		# https://en.wikipedia.org/wiki/On-base_plus_slugging
+  		res = Player.select("id, given_name, surname, position, " + 
+  			                 "hits, runs, home_runs, rbi, at_bats, " +
+  		                    "steals, #{ops} as ops, #{avg} as avg", 
+  			).order("#{fld} desc").limit(25)
+	end
+ 
 
 =begin
   def ops

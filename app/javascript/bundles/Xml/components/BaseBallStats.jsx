@@ -13,9 +13,12 @@ const HdrRows = (props) => {
 
 	return(<tr>
 		<th>Name</th>
+		<th>Position</th>
+		<th data-fld='avg' onClick={clickHandler}>AVG</th>
 		<th data-fld='hits' onClick={clickHandler}>Hits</th>
 		<th data-fld='runs' onClick={clickHandler}>Runs</th>
 		<th data-fld='rbi' onClick={clickHandler}>RBI</th>
+		<th data-fld='at_bats' onClick={clickHandler}>at bats</th>
 		<th data-fld='steals' onClick={clickHandler}>Steals</th>
 		<th data-fld='ops' onClick={clickHandler}>OPS</th>
 	</tr>)
@@ -28,9 +31,12 @@ const Row = (props) => {
   return(
   <tr key={props.ky}>
 	 <td>{name}</td>
+	 <td>{props.row.position}</td>
+	 <td>{props.row.avg}</td>
 	 <td>{props.row.hits}</td>
 	 <td>{props.row.runs}</td>
 	 <td>{props.row.rbi}</td>
+	 <td>{props.row.at_bats}</td>
 	 <td>{props.row.steals}</td>
 	 <td>{props.row.ops}</td>
   </tr>)
@@ -106,9 +112,7 @@ export default class BaseBallStats extends React.Component {
     }
 
 	render() {
-		return (<div> <h3> Baseball Statistics </h3> 
-				<div id='main-container'></div>
-			</div>)		
+		return (<h3> Baseball Statistics </h3>)		
 	} 
 
 }
