@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= content_for?(:title) ? yield(:title) : "DupeAddrChecker" %></title>
+    <title><%= content_for?(:title) ? yield(:title) : "Baseball Statistics" %></title>
     <%= csrf_meta_tags %>
 
     <%= stylesheet_link_tag "application", :media => "all" %>    
     <%= javascript_include_tag "application" %>
-    <%= javascript_pack_tag 'upload_csv_bundle' %>
+    <%= javascript_pack_tag 'react_register_bundle' %>
 
   </head>
   <body>
@@ -21,10 +21,11 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">DupeAddrChecker</a>
+        <a class="navbar-brand" href="#">Base ball statistics</a>
         <div class="navbar-collapse collapse navbar-responsive-collapse">
           <ul class="nav navbar-nav">
-            <%# = react_component("UploadCsv", props: {}, prerender: false) %>
+            <%= react_component("UploadXml", props: {}, prerender: false) %>
+            <%= yield %>
           </ul>
         </div>
       </div>
@@ -32,7 +33,7 @@
 
     <div id='main-container' class="container">
       <footer>
-        <p>&copy; Dedupe the world 2018</p>
+        <p>&copy; Baseball Statistics exercise 2019</p>
       </footer>
 
     </div> <!-- /container -->

@@ -3,6 +3,7 @@ class MainController < ApplicationController
   end
 
   def upload_xml
+  	puts 'IN UPLOAD_XML'
 	xml_file = params[:xml_file]
 	tmp_file = xml_file.tempfile
 	pub_path = Rails.root.join('public', 'uploads', xml_file.original_filename)
@@ -12,8 +13,9 @@ class MainController < ApplicationController
 		file.write(tmp_file.read)
 	end
 
+    result = {}
 
-	render json: result.data.to_json
+	render json: result  # .data.to_json
 
   end
 
