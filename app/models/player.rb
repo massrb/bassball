@@ -31,6 +31,7 @@ class Player < ApplicationRecord
 
 
   def self.load_xml(path)
+  	  Player.delete_all
      # doc = Nokogiri.XML(open(path))
      # doc = File.open(path) { |f| Nokogiri::XML(f) }
      missing = {}
