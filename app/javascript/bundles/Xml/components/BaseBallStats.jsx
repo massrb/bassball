@@ -4,24 +4,64 @@ import React from 'react';
 import ReactDOM from 'react-dom'
 // import DeDupeResult from './DeDupeResult';
 
-const HdrRows = (props) => {
-	function clickHandler(e) {
-		var fld = e.target.dataset.fld;
+
+class HdrRows extends React.Component {
+
+    constructor(props) {
+    	super(props);
+    	this.clickHandler = this.clickHandler.bind(this);
+    	this.getIndicator = this.getIndicator.bind(this);
+    	// this.componentDidMount = this.componentDidMount.bind(this);
+    }
+
+	clickHandler(e) {
+		var fld = e.target.parentNode.dataset.fld;
+		console.log("target:", e.target);
 		console.log('click handler', fld);
-		props.selectRow(fld);
+		this.props.selectRow(fld);
 	}
 
-	return(<tr>
-		<th>Name</th>
-		<th>Position</th>
-		<th data-fld='avg' onClick={clickHandler}>AVG</th>
-		<th data-fld='hits' onClick={clickHandler}>Hits</th>
-		<th data-fld='runs' onClick={clickHandler}>Runs</th>
-		<th data-fld='rbi' onClick={clickHandler}>RBI</th>
-		<th data-fld='at_bats' onClick={clickHandler}>at bats</th>
-		<th data-fld='steals' onClick={clickHandler}>Steals</th>
-		<th data-fld='ops' onClick={clickHandler}>OPS</th>
-	</tr>)
+	componentDidMount() {
+		console.log('add indicator', this.props.field);
+		addRowIndicator(this.props.field);
+	}
+
+	getIndicator() {
+		if (this.props.dir == 'asc') {
+			return(<i className={'fa fa-angle-up'}></i>)
+		} else {	
+  			return(<i className={'fa fa-angle-down'}></i>)			
+		}
+	}
+
+   render() {
+   	console.log('render HdrRows');
+   	var clickHandler = this.clickHandler;
+
+   	 var fields = ['AVG', 'Hits', 'Runs',
+   	 'RBI','at_bats','Steals', 'OPS'];
+       var rows = [];
+       var that = this;
+ 
+	    rows.push(fields.map((fld,ky) => {
+        var typ = fld.toLowerCase();
+        var kl = typ + '-indicator col-indicator';
+        var indicator = null;
+        if (typ == this.props.field) {
+        	indicator = that.getIndicator();
+        }
+		  return(<th key={ky} data-fld={typ} onClick={clickHandler}>
+				<span className={kl}>{indicator}</span>
+			  	<a>{fld}</a></th>)
+	    }))
+
+		return(<tr>
+			<th>ID</th>
+			<th>Name</th>
+			<th>Position</th>
+			{rows}
+		</tr>)
+   }
 }
 
 
@@ -30,6 +70,7 @@ const Row = (props) => {
 
   return(
   <tr key={props.ky}>
+     <td>{props.row.id}</td>
 	 <td>{name}</td>
 	 <td>{props.row.position}</td>
 	 <td>{props.row.avg}</td>
@@ -44,22 +85,34 @@ const Row = (props) => {
 }	
 
 
-const StatsResult = (props) => {
+class StatsResult extends React.Component {
 
-  var rows = [];
+  constructor(props) {
+  	super(props)
+  }
 
-  rows.push(props.rows.map((row, ky) => {
-	  return(<Row key={ky} ky={ky} row={row} />)
-  }))
+  componentDidMount() {
+  	console.log('StatsResult mounted');
+  }
 
-  return(
-		<table className={"table table-striped"}>
-			<tbody>
-			  <HdrRows selectRow={props.selectRow}/>
-			  {rows}
-			</tbody>
-		</table>
-  	)
+  render() {
+	  var rows = [];
+
+	  rows.push(this.props.rows.map((row, ky) => {
+		  return(<Row key={ky} ky={ky} row={row} />)
+	  }))
+
+	  console.log('return render StatsResult')
+	  return(
+			<table className={"table table-striped"}>
+				<tbody>
+				  <HdrRows dir={this.props.dir} field={this.props.field} 
+				  selectRow={this.props.selectRow}/>
+				  {rows}
+				</tbody>
+			</table>
+	  	)
+	}
 
 }
 
@@ -69,6 +122,8 @@ export default class BaseBallStats extends React.Component {
 		super(props)
 		this.selectRow = this.selectRow.bind(this);
 		this.renderRow = this.renderRow.bind(this);
+		this.field = 'hits';
+		this.dir = 'desc';
     }
 
     selectRow(fld) {
@@ -77,11 +132,26 @@ export default class BaseBallStats extends React.Component {
     	this.renderRow(fld);
     }
 
-    renderRow(fld='hits') {
+
+    renderRow(fld) {
     	var that = this;
-    	var data = {field: fld};
+    	var field = fld || this.field;
+    	if (field == this.field) {
+    		if (this.dir == 'desc') {
+    			this.dir = 'asc';
+    		} else
+    		{
+    			this.dir = 'desc';
+    		}
+    	} else {
+    		this.dir = 'desc';
+    	}
+    	
+    	this.field = field;
+    	var data = {field: field};
+
     	console.log('render row', data);
-    	var url = `${window.location}?field=${fld}`;
+    	var url = `${window.location}?field=${field}&dir=${this.dir}`;
     	console.log('url:', url);
 		$.ajax({
 			type: "get",
@@ -91,7 +161,9 @@ export default class BaseBallStats extends React.Component {
 				console.log(data);
 				ReactDOM.render(
 					React.createElement(StatsResult, 
-					 { selectRow: that.selectRow, rows: data }),
+					 { selectRow: that.selectRow, field: field, 
+					 	dir: that.dir,
+					   rows: data }),
 					document.getElementById('main-container')
 				);
 			},
@@ -112,7 +184,19 @@ export default class BaseBallStats extends React.Component {
     }
 
 	render() {
-		return (<h3> Baseball Statistics </h3>)		
+		return (<div className={'baseball-stats'}></div>)		
 	} 
+
+}
+
+// This is declared outside the class and at the bottom
+// because the string manipulation wrecks the color
+// coding in the IDE editor
+
+function addRowIndicator(indicator) {
+
+	//var cl = `${indicator}-indicator`;
+	//var html = "<i class='fal fa-angle-down'></i>";
+	//$(`.${cl}`).html(html);
 
 }

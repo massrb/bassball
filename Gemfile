@@ -61,7 +61,7 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-
+=begin
 group :development, :test do
   gem 'sqlite3'
 end
@@ -69,6 +69,10 @@ end
 group :production do
   gem 'pg'
 end
+=end
+
+
+gem 'pg'
 
 gem "therubyracer", '0.12.3'
 gem "less-rails"
@@ -78,3 +82,4 @@ gem 'react_on_rails', '11.1.4'
 gem 'jquery-rails'
 gem 'pry-rails', :group => :development
 # gem 'mini_racer', platforms: :ruby
+gem "font-awesome-rails"

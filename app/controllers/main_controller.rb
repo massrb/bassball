@@ -2,9 +2,10 @@
 class MainController < ApplicationController
   def index
   	if request.xhr?
-  		params.permit(:field)
+  		params.permit(:field, :dir)
   		fld = params[:field]
-  	   res = Player.get_rows(fld)
+  		dir = params[:dir]
+  	   res = Player.get_rows(fld,dir)
       render json: res.to_json
   	else
   		puts 'plain render'
