@@ -29,7 +29,6 @@ class MainController < ApplicationController
 	result = {}
 
 	render json: result  # .data.to_json
-
   end
 
 
