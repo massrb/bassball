@@ -19,11 +19,6 @@ class HdrRows extends React.Component {
 		this.props.selectRow(fld);
 	}
 
-	componentDidMount() {
-		console.log('add indicator', this.props.field);
-		addRowIndicator(this.props.field);
-	}
-
 	getIndicator() {
 		if (this.props.dir == 'asc') {
 			return(<i className={'fa fa-angle-up'}></i>)
@@ -223,14 +218,3 @@ export default class BaseBallStats extends React.Component {
 
 }
 
-// This is declared outside the class and at the bottom
-// because the string manipulation wrecks the color
-// coding in the IDE editor
-
-function addRowIndicator(indicator) {
-
-	//var cl = `${indicator}-indicator`;
-	//var html = "<i class='fal fa-angle-down'></i>";
-	//$(`.${cl}`).html(html);
-
-}
