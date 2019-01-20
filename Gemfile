@@ -83,3 +83,4 @@ gem 'jquery-rails'
 gem 'pry-rails', :group => :development
 # gem 'mini_racer', platforms: :ruby
 gem "font-awesome-rails"
+gem 'kaminari'

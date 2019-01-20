@@ -2,22 +2,20 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom'
-// import DeDupeResult from './DeDupeResult';
+import Pagination from "react-js-pagination";
 
 
 class HdrRows extends React.Component {
 
-    constructor(props) {
-    	super(props);
-    	this.clickHandler = this.clickHandler.bind(this);
-    	this.getIndicator = this.getIndicator.bind(this);
-    	// this.componentDidMount = this.componentDidMount.bind(this);
-    }
+	 constructor(props) {
+		super(props);
+		this.clickHandler = this.clickHandler.bind(this);
+		this.getIndicator = this.getIndicator.bind(this);
+		// this.componentDidMount = this.componentDidMount.bind(this);
+	 }
 
 	clickHandler(e) {
 		var fld = e.target.parentNode.dataset.fld;
-		console.log("target:", e.target);
-		console.log('click handler', fld);
 		this.props.selectRow(fld);
 	}
 
@@ -30,30 +28,29 @@ class HdrRows extends React.Component {
 		if (this.props.dir == 'asc') {
 			return(<i className={'fa fa-angle-up'}></i>)
 		} else {	
-  			return(<i className={'fa fa-angle-down'}></i>)			
+			return(<i className={'fa fa-angle-down'}></i>)			
 		}
 	}
 
-   render() {
-   	console.log('render HdrRows');
-   	var clickHandler = this.clickHandler;
+	render() {
+		var clickHandler = this.clickHandler;
 
-   	 var fields = ['AVG', 'Hits', 'Runs',
-   	 'RBI','at_bats','Steals', 'OPS'];
-       var rows = [];
-       var that = this;
+		 var fields = ['AVG', 'Hits', 'Runs',
+		 'RBI','Steals', 'OPS'];
+		 var rows = [];
+		 var that = this;
  
-	    rows.push(fields.map((fld,ky) => {
-        var typ = fld.toLowerCase();
-        var kl = typ + '-indicator col-indicator';
-        var indicator = null;
-        if (typ == this.props.field) {
-        	indicator = that.getIndicator();
-        }
+		 rows.push(fields.map((fld,ky) => {
+		  var typ = fld.toLowerCase();
+		  var kl = typ + '-indicator col-indicator';
+		  var indicator = null;
+		  if (typ == this.props.field) {
+			indicator = that.getIndicator();
+		  }
 		  return(<th key={ky} data-fld={typ} onClick={clickHandler}>
 				<span className={kl}>{indicator}</span>
-			  	<a>{fld}</a></th>)
-	    }))
+				<a>{fld}</a></th>)
+		 }))
 
 		return(<tr>
 			<th>ID</th>
@@ -61,7 +58,7 @@ class HdrRows extends React.Component {
 			<th>Position</th>
 			{rows}
 		</tr>)
-   }
+	}
 }
 
 
@@ -70,14 +67,13 @@ const Row = (props) => {
 
   return(
   <tr key={props.ky}>
-     <td>{props.row.id}</td>
+	  <td>{props.row.id}</td>
 	 <td>{name}</td>
 	 <td>{props.row.position}</td>
 	 <td>{props.row.avg}</td>
 	 <td>{props.row.hits}</td>
 	 <td>{props.row.runs}</td>
 	 <td>{props.row.rbi}</td>
-	 <td>{props.row.at_bats}</td>
 	 <td>{props.row.steals}</td>
 	 <td>{props.row.ops}</td>
   </tr>)
@@ -85,14 +81,28 @@ const Row = (props) => {
 }	
 
 
+
 class StatsResult extends React.Component {
 
   constructor(props) {
-  	super(props)
+	super(props);
+	this.state = {activePage: props.page};
+	console.log('in ctor, page:', props.page)
+	this.handlePageChange = this.handlePageChange.bind(this);
+  }
+
+
+  handlePageChange(pageNumber) {
+	 console.log(`active page is ${pageNumber}`);
+	 // this.setState({activePage: pageNumber});
+	 if (this.state.activePage != pageNumber) {
+		this.props.selectRow(this.props.field, pageNumber);
+		this.setState({activePage: pageNumber});
+	 }
   }
 
   componentDidMount() {
-  	console.log('StatsResult mounted');
+	console.log('StatsResult mounted');
   }
 
   render() {
@@ -102,16 +112,25 @@ class StatsResult extends React.Component {
 		  return(<Row key={ky} ky={ky} row={row} />)
 	  }))
 
-	  console.log('return render StatsResult')
+	  console.log('return render StatsResult page', this.state.activePage);
 	  return(
-			<table className={"table table-striped"}>
-				<tbody>
-				  <HdrRows dir={this.props.dir} field={this.props.field} 
-				  selectRow={this.props.selectRow}/>
-				  {rows}
-				</tbody>
-			</table>
-	  	)
+			<div>
+				<Pagination
+				 activePage={this.state.activePage}
+				 itemsCountPerPage={25}
+				 totalItemsCount={this.props.rec_count}
+				 pageRangeDisplayed={5}
+				 onChange={this.handlePageChange}
+			  />
+				<table className={"table table-striped"}>
+					<tbody>
+					  <HdrRows dir={this.props.dir} field={this.props.field} 
+					  selectRow={this.props.selectRow}/>
+					  {rows}
+					</tbody>
+				</table>
+			</div>
+		)
 	}
 
 }
@@ -122,48 +141,61 @@ export default class BaseBallStats extends React.Component {
 		super(props)
 		this.selectRow = this.selectRow.bind(this);
 		this.renderRow = this.renderRow.bind(this);
-		this.field = 'hits';
+		this.page = 1;
+		this.field = 'avg';
 		this.dir = 'desc';
-    }
+	 }
 
-    selectRow(fld) {
-    	console.log('select row');
-    	console.log(fld);
-    	this.renderRow(fld);
-    }
+	 selectRow(fld, page=null) {
+		// console.log('select row field/page', fld, page);
+		this.renderRow(fld, page);
+	 }
 
 
-    renderRow(fld) {
-    	var that = this;
-    	var field = fld || this.field;
-    	if (field == this.field) {
-    		if (this.dir == 'desc') {
-    			this.dir = 'asc';
-    		} else
-    		{
-    			this.dir = 'desc';
-    		}
-    	} else {
-    		this.dir = 'desc';
-    	}
-    	
-    	this.field = field;
-    	var data = {field: field};
+	 renderRow(fld, page) {
+		var that = this;
+		var field = fld || this.field;
+		console.log('renderRow', fld, page);
+		console.log(this.field, this.page);
+		if (!fld && !page) {
 
-    	console.log('render row', data);
-    	var url = `${window.location}?field=${field}&dir=${this.dir}`;
-    	console.log('url:', url);
+		}
+		else if (field == this.field && (page == this.page || !page)) {
+			// console.log('same field and page')
+			if (this.dir == 'desc') {
+				this.dir = 'asc';
+			} else {
+				this.dir = 'desc';
+			}
+		} else if (fld != this.field) {
+			// console.log('reset page');
+			this.page = 1;
+			this.dir = 'desc';	
+		} else if (page != this.page) {
+			this.page = page || 1;
+		} else {
+			this.dir = 'desc';
+		}
+		
+		this.field = field;
+		var data = {field: field};
+
+		console.log('render row', data);
+		var url = `${window.location}?fld=${field}&dir=${this.dir}&pg=${this.page}`;
+		console.log('url:', url);
+		// ReactDOM.unmountComponentAtNode(document.getElementById('main-container'));
 		$.ajax({
 			type: "get",
 			url: url,
-			success: function (data) {
-					// your callback here
-				console.log(data);
+			success: function (result) {
+				console.log(result);
 				ReactDOM.render(
 					React.createElement(StatsResult, 
 					 { selectRow: that.selectRow, field: field, 
-					 	dir: that.dir,
-					   rows: data }),
+						dir: that.dir,
+						page: that.page,
+						rec_count: result.rec_count, 
+						rows: result.data }),
 					document.getElementById('main-container')
 				);
 			},
@@ -177,14 +209,16 @@ export default class BaseBallStats extends React.Component {
 			processData: false,
 			timeout: 60000
 		});
-    }
+	 }
 
-    componentDidMount() {
-    	this.renderRow()
-    }
+	 componentDidMount() {
+		this.renderRow()
+	 }
 
 	render() {
-		return (<div className={'baseball-stats'}></div>)		
+		return (
+			<div className={'baseball-stats'}>
+			</div>)		
 	} 
 
 }
