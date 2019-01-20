@@ -1,18 +1,18 @@
 
 class MainController < ApplicationController
   def index
-  	if request.xhr?
-  		params.permit(:fld, :dir, :pg)
-  		fld = params[:fld]
-  		dir = params[:dir]
-  		page = params[:pg]
-  	   res = Player.get_rows(fld,dir).page(page)
-  	   rec_count = Player.count
-  	   data = {rec_count: rec_count, data: res}
-      render json: data.to_json
-  	else
-  		render 'index'
-  	end
+	if request.xhr?
+		params.permit(:fld, :dir, :pg)
+		fld = params[:fld]
+		dir = params[:dir]
+		page = params[:pg]
+		res = Player.get_rows(fld,dir).page(page)
+		rec_count = Player.count
+		data = {rec_count: rec_count, data: res}
+		render json: data.to_json
+	else
+		render 'index'
+	end
   end
 
   def upload_xml
@@ -26,7 +26,7 @@ class MainController < ApplicationController
 	end
 	Player.load_xml(pub_path)
 
-   result = {}
+	result = {}
 
 	render json: result  # .data.to_json
 
